@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-pangu4md",
+  "name": "Pangu4MD",
+  "version": "0.0.1",
+  "minAppVersion": "1.5.0",
+  "description": "Automatically insert spaces between Chinese and English characters in Markdown.",
+  "author": "Tenktau",
+  "authorUrl": "https://github.com/tenktau",
+  "isDesktopOnly": false
+}
