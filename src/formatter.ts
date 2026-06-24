@@ -50,14 +50,41 @@ export function formatMarkdown(content: string): string {
       const prefix = taskMatch[1];
       const text = taskMatch[2];
 
-      result.push(prefix + processInlineCode(text));
+      result.push(prefix + processWikiLinks(text));
       continue;
     }
 
-    result.push(processInlineCode(line));
+    result.push(processWikiLinks(line));
   }
 
   return result.join("\n");
+}
+
+/** Wiki link pattern: [[link]] or ![[image.png|500]] */
+const WIKI_LINK_RE = /!?\[\[[^\]]*\]\]/g;
+
+/**
+ * Process a line by first protecting wiki links, then inline code,
+ * and finally applying spacing to the remaining text.
+ */
+function processWikiLinks(line: string): string {
+  const parts = line.split(WIKI_LINK_RE);
+
+  // Collect matched wiki links in order
+  const matches: string[] = [];
+  let m: RegExpExecArray | null;
+  WIKI_LINK_RE.lastIndex = 0;
+  while ((m = WIKI_LINK_RE.exec(line)) !== null) {
+    matches.push(m[0]);
+  }
+
+  // Interleave: parts[i] is text, matches[i] is the wiki link between them
+  return parts
+    .map((part, i) => {
+      const processed = processInlineCode(part);
+      return matches[i] ? processed + matches[i] : processed;
+    })
+    .join("");
 }
 
 function processInlineCode(line: string): string {
